@@ -1,0 +1,38 @@
+// Prisma Schema — Proyecto Semana 05
+// Dominio: Tienda de Instrumentos Musicales
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Recurso Secundario: Categoría de Instrumentos
+model Category {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique
+  items     Item[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Recurso Principal: Instrumento Musical
+model Item {
+  id           String @id @default(uuid()) @db.Uuid
+  sku          String @unique
+  name         String
+  brand        String
+  price        Float
+  salesCount   Int    @default(0)
+  rentalsCount Int    @default(0)
+
+  // Relación 1:N con Category
+  categoryId String   @db.Uuid
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
